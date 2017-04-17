@@ -4,6 +4,7 @@ class Cell:
         self.i = i
         self.j = j
 
+
 class GameOfLifeSimulator(object):
     directions = [(-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)]
 
@@ -11,10 +12,10 @@ class GameOfLifeSimulator(object):
         no = 0
         for direction in self.directions:
             dx, dy = direction
-            if i+dx<0 or j+dy<0:
+            if i + dx < 0 or j + dy < 0:
                 continue
             try:
-                no = no + board[i+dx][j+dy]
+                no = no + board[i + dx][j + dy]
             except IndexError:
                 continue
         return no
@@ -29,10 +30,6 @@ class GameOfLifeSimulator(object):
             for j, cell in enumerate(row):
                 alive = True if board[i][j] else False
                 no = self.noOfNeighbors(board, i, j)
-                if ((no<2 or no>3) and alive) or (no==3 and not alive):
-                    to_toggle.append(Cell(i,j))
+                if ((no < 2 or no > 3) and alive) or (no == 3 and not alive):
+                    to_toggle.append(Cell(i, j))
         self.toggle(board, to_toggle)
-        # return board
-
-# print(GridLoader.fileTo2dListOfInts('example.txt'))
-# print(GameOfLifeModel().gameOfLife(GridLoader.fileTo2dListOfInts('example.txt')))

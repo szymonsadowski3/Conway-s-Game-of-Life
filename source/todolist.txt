@@ -1,0 +1,2 @@
+default properties in config file
+custom cell_size while importing from file
