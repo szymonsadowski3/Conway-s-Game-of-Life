@@ -23,6 +23,11 @@ def detectResolution():
     output = subprocess.Popen('xrandr | grep "\*" | cut -d" " -f4', shell=True, stdout=subprocess.PIPE).communicate()[0]
     return output.decode('utf-8')
 
+def saveModelToFile(path, model):
+    with open(path, 'w+') as f:
+        for line in model:
+            f.write(''.join(str(x) for x in line))
+            f.write('\n')
 
 class GtkHelper(object):
     @staticmethod

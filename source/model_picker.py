@@ -60,9 +60,14 @@ class ModelPicker(Gtk.Window):
         window_width = int(resolution[0]) // 3
         return window_width // len(consistent_model[0])
 
+    def changeColor(self, color):
+        rgba = helpers.GtkHelper.generateColor(color)
+        self.override_background_color(0, rgba)
+
     def __init__(self):
         Gtk.Window.__init__(self, title="MODEL PICKER")
         self.set_border_width(6)
+        self.changeColor('indian red')
 
         vbox = Gtk.Box(spacing=6)
         self.add(vbox)
@@ -89,7 +94,10 @@ class ModelPicker(Gtk.Window):
         self.show_all()
         Gtk.main()
         self.destroy()
-        return self.initial_model_and_size
+        if self.initial_model_and_size:
+            return self.initial_model_and_size
+        else:
+            return helpers.getModelBlank(20, 20), 24
 
     def onCustomGridButtonClicked(self, widget):
         dialog = DialogCustomEmptyGrid(self)
@@ -107,6 +115,7 @@ class ModelPicker(Gtk.Window):
             print("The Cancel button was clicked")
 
         dialog.destroy()
+        self.changeColor('medium sea green')
 
     def onImportModelFromFileButtonClicked(self, widget):
         dialog = Gtk.FileChooserDialog("Please choose a file", self, Gtk.FileChooserAction.OPEN,
@@ -126,6 +135,7 @@ class ModelPicker(Gtk.Window):
             print("Cancel clicked")
 
         dialog.destroy()
+        self.changeColor('medium sea green')
 
     def addFilters(self, dialog):
         filter_text = Gtk.FileFilter()
@@ -137,9 +147,6 @@ class ModelPicker(Gtk.Window):
         filter_any.set_name("Any files")
         filter_any.add_pattern("*")
         dialog.add_filter(filter_any)
-
-    def getInitialModel(self):
-        return self.initial_model_and_size
 
     def show(self):
         win = ModelPicker()

@@ -1,13 +1,16 @@
 import simulator
 import model_picker
 import gi
+import helpers
 from helpers import GtkHelper
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+DEFAULT_BG_COLOR = 'steel blue'
+
 class GameOfLifeGrid(Gtk.Window):
-    color_mapping = {0: 'white', 1:'black'}
+    color_mapping = {0: DEFAULT_BG_COLOR, 1: 'black'}
 
     #HELPERS
     def determineWhichCellWasClicked(self, x, y):
@@ -20,7 +23,7 @@ class GameOfLifeGrid(Gtk.Window):
     def colorSwatch(self, str_color):
         return GtkHelper.generateCell(str_color, self.cell_size)
 
-    def generateGridOfCells(self, grid, init_color='white'):
+    def generateGridOfCells(self, grid, init_color=DEFAULT_BG_COLOR):
         for i in range(self.grid_width):
             for j in range(self.grid_height):
                 cell = self.colorSwatch(init_color)
@@ -36,7 +39,7 @@ class GameOfLifeGrid(Gtk.Window):
                 if self.model[i][j]:
                     self.changeCellColor(i,j,'black')
                 elif not self.model[i][j]:
-                    self.changeCellColor(i, j, 'white')
+                    self.changeCellColor(i, j, DEFAULT_BG_COLOR)
 
     def nextStep(self, widget):
         self.game_of_life_simulator.simulate(self.model)
@@ -57,6 +60,21 @@ class GameOfLifeGrid(Gtk.Window):
             return
         self.toggleCellState(row, col)
 
+    def saveModel(self, widget):
+        dialog = Gtk.FileChooserDialog("Save", self, Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            save_path = dialog.get_filename()
+            print("Save selected: " + save_path)
+            helpers.saveModelToFile(save_path, self.model)
+
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        dialog.destroy()
+
     def __init__(self):
         #DEFAULT PROPERTIES
         self.grid_width = 20
@@ -75,10 +93,14 @@ class GameOfLifeGrid(Gtk.Window):
         hb.set_show_close_button(True)
         hb.props.title = "GAME OF LIFE"
         self.set_titlebar(hb)
-        button = Gtk.Button()
-        button.add(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
-        button.connect("clicked", self.nextStep)
-        hb.add(button)
+        next_step_button = Gtk.Button()
+        next_step_button.add(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
+        next_step_button.connect("clicked", self.nextStep)
+        hb.add(next_step_button)
+
+        save_button = Gtk.Button("Save")
+        save_button.connect("clicked", self.saveModel)
+        hb.add(save_button)
         #CONFIG DIALOG
         configurer = model_picker.ModelPicker()
         initial_model = configurer.run()
