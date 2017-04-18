@@ -57,7 +57,7 @@ class ModelPicker(Gtk.Window):
 
     def getOptimalCellSizeForModel(self, consistent_model):
         resolution = helpers.detectResolution().split('x')
-        window_width = int(resolution[0]) // 3
+        window_width = float(resolution[0]) // helpers.ConfigLoader.getDefaultValueFor('WINDOW_SIZE_DIVIDEND_WHILE_IMPORT_FROM_FILE')
         return window_width // len(consistent_model[0])
 
     def changeColor(self, color):
