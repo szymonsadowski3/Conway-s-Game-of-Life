@@ -49,14 +49,15 @@ class GameOfLifeGrid(Gtk.Window):
     def updateVisualization(self):
         for i in range(self.grid_height):
             for j in range(self.grid_width):
-                if self.model[i][j]:
+                if self.model[i][j]!=self.model_buffer and self.model[i][j]:
                     self.changeCellColor(i,j, DEFAULT_FOREGROUND_COLOR)
-                elif not self.model[i][j]:
+                elif self.model[i][j]!=self.model_buffer and not self.model[i][j]:
                     self.changeCellColorToBG(i, j)
 
     def nextStep(self, widget):
         self.game_of_life_simulator.simulate(self.model)
         self.updateVisualization()
+        self.model_buffer = self.model
         win.show_all()
 
     def toggleCellState(self, row, col):
@@ -129,6 +130,7 @@ class GameOfLifeGrid(Gtk.Window):
         self.game_of_life_simulator = simulator.GameOfLifeSimulator()
         #VISUALIZATION
         self.generateGridOfCells(self.grid)
+        self.model_buffer = self.model
         self.updateVisualization()
         self.show_all()
 
